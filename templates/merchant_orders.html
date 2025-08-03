@@ -1,0 +1,45 @@
+<!-- merchant_orders.html --><!DOCTYPE html><html>
+<head>
+  <title>Customer Orders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial;
+      padding: 15px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .order {
+      border: 2px solid orange;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      background: #222;
+    }
+    .btn {
+      padding: 10px;
+      border: none;
+      margin: 5px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 45%;
+    }
+    .packed {
+      background: #ffa500;
+      color: white;
+    }
+    .complete {
+      background: #00c853;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Orders from {{ customer }}</h2>{% for order in orders %} <div class="order"> <p><strong>Items:</strong><br>{{ order[1]|safe }}</p> <p>Status: {{ order[2] }}</p> <a class="btn packed" href="/mark/{{ order[0] }}/packed">Mark as Packed</a> <a class="btn complete" href="/mark/{{ order[0] }}/completed">Mark as Completed</a> </div> {% else %} <p>No orders found.</p> {% endfor %}
+
+</body>
+</html>

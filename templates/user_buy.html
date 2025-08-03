@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shop Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #2c2c2c;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid #ff9800;
+    }
+    h2 {
+      text-align: center;
+      color: #ff9800;
+      margin-bottom: 25px;
+    }
+    input[type="text"], input[type="number"], button, textarea {
+      width: calc(100% - 24px); /* Account for padding */
+      padding: 12px;
+      margin-bottom: 15px; /* Spacing between elements */
+      border: 1px solid #ff9800;
+      background: #3a3a3a; /* Slightly lighter dark */
+      color: #e0e0e0;
+      font-size: 17px;
+      border-radius: 8px;
+    }
+    input::placeholder {
+      color: #aaa;
+      opacity: 0.8;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #ff9800;
+    }
+    .row {
+      display: flex;
+      gap: 15px; /* Space between item name and quantity inputs */
+      margin-bottom: 15px;
+    }
+    .row input {
+      flex: 1; /* Make inputs take equal space */
+      margin-bottom: 0; /* Override default margin */
+    }
+    .add-btn {
+      background-color: #2196F3; /* Blue */
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .add-btn:hover {
+      background-color: #1976D2;
+    }
+    #items-list {
+      border: 1px solid #ff9800;
+      min-height: 120px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      background: #3a3a3a;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+    .submit-btn {
+      width: 60%;
+      margin: 30px auto 0;
+      display: block;
+      background-color: #4CAF50; /* Green */
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .submit-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Order from {{ shop_name }}</h2>
+    <form method="POST">
+      <input type="hidden" name="shop_name" id="shop_name_hidden" value="{{ shop_name }}">
+
+      <label for="item_name">Item Name</label>
+      <div class="row">
+        <input type="text" id="item_name" placeholder="e.g., Burger">
+        <input type="number" id="quantity" placeholder="Quantity" min="1">
+      </div>
+
+      <button type="button" onclick="addItem()" class="add-btn">Add Item</button>
+
+      <label for="items-list" style="margin-top: 20px;">Added Items:</label>
+      <div id="items-list">No items added yet.</div>
+
+      <input type="hidden" name="items_data" id="items_data">
+      <button class="submit-btn" type="submit">Place Order</button>
+    </form>
+  </div>
+
+  <script>
+    let items = [];
+
+    function addItem() {
+      const nameInput = document.getElementById('item_name');
+      const qtyInput = document.getElementById('quantity');
+
+      const name = nameInput.value.trim();
+      const qty = qtyInput.value.trim();
+
+      if (name && qty && parseInt(qty) > 0) {
+        items.push({ name: name, qty: parseInt(qty) }); // Store as number
+        document.getElementById('items_data').value = JSON.stringify(items);
+
+        updateItemsListDisplay();
+
+        nameInput.value = ''; // Clear inputs
+        qtyInput.value = '';
+        nameInput.focus(); // Keep focus on item name for quick entry
+      } else {
+        alert('Please enter both item name and a valid quantity.');
+      }
+    }
+
+    function updateItemsListDisplay() {
+      const listDiv = document.getElementById('items-list');
+      if (items.length === 0) {
+        listDiv.innerHTML = 'No items added yet.';
+      } else {
+        const list = items.map((item, index) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0;">
+            <span>${item.name} x${item.qty}</span>
+            <button type="button" onclick="removeItem(${index})" style="width: auto; padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; margin: 0;">Remove</button>
+          </div>
+        `).join('');
+        listDiv.innerHTML = list;
+      }
+    }
+
+    function removeItem(index) {
+      items.splice(index, 1); // Remove item at index
+      document.getElementById('items_data').value = JSON.stringify(items);
+      updateItemsListDisplay(); // Update the display
+    }
+
+    // Initialize display on load
+    document.addEventListener('DOMContentLoaded', updateItemsListDisplay);
+  </script>
+</body>
+</html>
